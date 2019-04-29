@@ -945,9 +945,9 @@ GameObject:
   - component: {fileID: 1028495416}
   - component: {fileID: 1028495415}
   - component: {fileID: 1028495417}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tilemap
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1478,7 +1478,7 @@ GameObject:
   - component: {fileID: 1253125220}
   - component: {fileID: 1253125219}
   - component: {fileID: 1253125221}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PlayerHero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1578,9 +1578,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97ceca372f50d29418044a0ad1683697, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpforce: 200
+  jumpforce: 20
   speed: 2
-  isjump: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!50 &1253125220
 Rigidbody2D:
   serializedVersion: 4
