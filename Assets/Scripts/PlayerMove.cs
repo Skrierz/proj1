@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    public float jumpforce;
-    public float speed;
+    [SerializeField]
+    private float jumpforce;
+    [SerializeField]
+    private float speed;
 
-   public bool isjump=false;
+
+    private bool facingR=true;
+    [SerializeField]
+    private LayerMask groundLayer;
     Rigidbody2D rb;
     // Start is called before the first frame update
     void Start()
@@ -20,27 +25,56 @@ public class PlayerMove : MonoBehaviour
     {
 
     }
-   
+
     private void FixedUpdate()
     {
-        float move = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(speed * move, rb.velocity.y);
-        Jump();
-    }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
+        float HorizontAxis = Input.GetAxis("Horizontal");
+        float VerticalAxis = Input.GetAxis("Vertical");
+        rb.velocity = new Vector2(speed * HorizontAxis, rb.velocity.y);
+        Flip(HorizontAxis);
+        if (VerticalAxis==1)
         {
-            isjump = false;
-            rb.velocity = Vector2.zero;
+            Jump();
         }
+       
+    }
+
+    bool IsGrounded()
+    {
+        Vector2 position = transform.position;
+        Vector2 direction = Vector2.down;
+        float distance = 1.0f;
+        Debug.DrawRay(position, direction, Color.green);
+        RaycastHit2D hit = Physics2D.Raycast(position, direction, distance, groundLayer);
+        if (hit.collider != null)
+        {
+            return true;
+        }
+
+        return false;
     }
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !isjump)
+        if (!IsGrounded())
         {
-            isjump = true;
+            return;
+        }
+        else
+        {
             rb.AddForce(new Vector2(rb.velocity.x, jumpforce));
+        }
+       
+    }
+
+    void Flip(float horizontal)
+    {
+        if (horizontal > 0 && !facingR || horizontal <0 &&facingR)
+        {
+            facingR = !facingR;
+
+            Vector3 theScale = transform.localScale;
+            theScale.x *= -1;
+            transform.localScale = theScale;
         }
     }
   
