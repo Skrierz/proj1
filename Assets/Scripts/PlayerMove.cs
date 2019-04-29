@@ -5,65 +5,98 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     [SerializeField]
-    private float jumpforce;
+    [Range(1, 10)]
+    private float jumpForce;
+
     [SerializeField]
     private float speed;
 
-
-    private bool facingR=true;
     [SerializeField]
-    private LayerMask groundLayer;
+    private LayerMask ground;
+
+    [SerializeField]
+    private float groundRadius;
+
+    [SerializeField]
+    private Transform[] groundPoints;
+
+    [SerializeField]
+    private float fallMultiplier;
+
+    [SerializeField]
+    private float lowJumpMultiplier;
+
+    private bool isGrounded;
+
+    private bool facingR = true;
+
     Rigidbody2D rb;
+
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
+        float horizontAxis = Input.GetAxis("Horizontal");
+        isGrounded = IsGrounded();
+
+        Movement(horizontAxis);
+
+        EnchancedJump();
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            Jump();
+            isGrounded = false;
+        }        
+    }
+
+    private void Movement(float horizontal)
+    {
+        rb.velocity = new Vector2(speed * horizontal, rb.velocity.y);
+        Flip(horizontal);
 
     }
 
-    private void FixedUpdate()
+    private void Jump()
     {
-        float HorizontAxis = Input.GetAxis("Horizontal");
-        float VerticalAxis = Input.GetAxis("Vertical");
-        rb.velocity = new Vector2(speed * HorizontAxis, rb.velocity.y);
-        Flip(HorizontAxis);
-        if (VerticalAxis==1)
+        GetComponent<Rigidbody2D>().velocity = Vector2.up * jumpForce;
+    }
+
+    private void EnchancedJump()
+    {
+        if (rb.velocity.y < 0)
         {
-            Jump();
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
         }
-       
+        else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
+        {
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+        }
+
     }
 
     bool IsGrounded()
     {
-        Vector2 position = transform.position;
-        Vector2 direction = Vector2.down;
-        float distance = 1.0f;
-        Debug.DrawRay(position, direction, Color.green);
-        RaycastHit2D hit = Physics2D.Raycast(position, direction, distance, groundLayer);
-        if (hit.collider != null)
+        if (rb.velocity.y == 0)
         {
-            return true;
-        }
+            foreach (Transform point in groundPoints)
+            {
+                Collider2D[] colliders = Physics2D.OverlapCircleAll(point.position, groundRadius, ground);
 
+                for (int i = 0; i < colliders.Length; i++)
+                {
+                    if (colliders[i].gameObject != gameObject)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
-    }
-    void Jump()
-    {
-        if (!IsGrounded())
-        {
-            return;
-        }
-        else
-        {
-            rb.AddForce(new Vector2(rb.velocity.x, jumpforce));
-        }
-       
     }
 
     void Flip(float horizontal)
