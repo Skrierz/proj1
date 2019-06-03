@@ -26,6 +26,9 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private float lowJumpMultiplier;
 
+    private Animator anim;
+
+    [SerializeField]
     private bool isGrounded;
 
     private bool facingR = true;
@@ -37,21 +40,23 @@ public class PlayerMove : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
     private void FixedUpdate()
     {
         float horizontAxis = Input.GetAxis("Horizontal");
         isGrounded = IsGrounded();
-
         Movement(horizontAxis);
-
         EnchancedJump();
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             Jump();
             isGrounded = false;
-        }        
+        }
+        RunAnimation();
+
+
     }
 
     private void Movement(float horizontal)
@@ -105,10 +110,19 @@ public class PlayerMove : MonoBehaviour
         {
             facingR = !facingR;
 
-            Vector3 theScale = transform.localScale;
-            theScale.x *= -1;
-            transform.localScale = theScale;
+            transform.Rotate(0f, 180f, 0f);
         }
+    }
+
+    void RunAnimation()
+    {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+        if (h != 0 && v == 0)
+            anim.SetBool("IsRun", true);
+        else
+            anim.SetBool("IsRun", false);
+        anim.SetBool("IsGrounded", isGrounded);
     }
   
 }
