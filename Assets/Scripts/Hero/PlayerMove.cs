@@ -42,13 +42,16 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
-
-    private void FixedUpdate()
+    private void Update()
     {
         float horizontAxis = Input.GetAxis("Horizontal");
         isGrounded = IsGrounded();
         Movement(horizontAxis);
         EnchancedJump();
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Attack();
+        }
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             Jump();
@@ -58,6 +61,26 @@ public class PlayerMove : MonoBehaviour
 
 
     }
+    /*
+    private void FixedUpdate()
+    {
+        float horizontAxis = Input.GetAxis("Horizontal");
+        isGrounded = IsGrounded();
+        Movement(horizontAxis);
+        EnchancedJump();
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Attack();
+        } 
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            Jump();
+            isGrounded = false;
+        }
+        RunAnimation();
+
+
+    }*/
 
     private void Movement(float horizontal)
     {
@@ -82,6 +105,11 @@ public class PlayerMove : MonoBehaviour
             rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
         }
 
+    }
+    void Attack()
+    {
+        Debug.Log("attack");
+        anim.SetTrigger("IsAttack");
     }
 
     bool IsGrounded()
@@ -123,6 +151,7 @@ public class PlayerMove : MonoBehaviour
         else
             anim.SetBool("IsRun", false);
         anim.SetBool("IsGrounded", isGrounded);
+
     }
   
 }
