@@ -31,10 +31,14 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private bool isGrounded;
 
+    public bool IsGrounded1 { get => isGrounded; set => isGrounded = value; }
+
+
     private bool facingR = true;
 
     Rigidbody2D rb;
 
+  
 
     // Start is called before the first frame update
     void Start()
@@ -45,17 +49,17 @@ public class PlayerMove : MonoBehaviour
     private void Update()
     {
         float horizontAxis = Input.GetAxis("Horizontal");
-        isGrounded = IsGrounded();
+//        IsGrounded1 = IsGrounded();
         Movement(horizontAxis);
         EnchancedJump();
         if (Input.GetButtonDown("Fire1"))
         {
             Attack();
         }
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && IsGrounded1)
         {
             Jump();
-            isGrounded = false;
+            IsGrounded1 = false;
         }
         RunAnimation();
 
@@ -111,7 +115,7 @@ public class PlayerMove : MonoBehaviour
         Debug.Log("attack");
         anim.SetTrigger("IsAttack");
     }
-
+    /*
     bool IsGrounded()
     {
         if (rb.velocity.y == 0)
@@ -130,7 +134,7 @@ public class PlayerMove : MonoBehaviour
             }
         }
         return false;
-    }
+    }*/
 
     void Flip(float horizontal)
     {
@@ -150,7 +154,7 @@ public class PlayerMove : MonoBehaviour
             anim.SetBool("IsRun", true);
         else
             anim.SetBool("IsRun", false);
-        anim.SetBool("IsGrounded", isGrounded);
+        anim.SetBool("IsGrounded", IsGrounded1);
 
     }
   

@@ -29,6 +29,7 @@ public class Enemy : MonoBehaviour
     private Animator anim;
 
     private bool facingR = true;
+    private bool startattack = false;
     private bool CanAttack=false;
     public bool CanAttack1 { get => CanAttack; set => CanAttack = value; }
 
@@ -67,7 +68,7 @@ public class Enemy : MonoBehaviour
     {
         if (CanAttack)
         {
-        
+            startattack = true;
             Transform SpellTarget = target;
             if (CastDuration < CastTime)
             {
@@ -90,6 +91,7 @@ public class Enemy : MonoBehaviour
 
     void flip()
     {
+        if (target!=null)
         if ( target.position.x<gameObject.transform.position.x && facingR || target.position.x > gameObject.transform.position.x && !facingR)
         {
             facingR = !facingR;
