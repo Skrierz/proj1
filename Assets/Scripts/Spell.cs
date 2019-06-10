@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Spell : MonoBehaviour
 {
+
     private AnimatorStateInfo anim;
     private double CastDuration=0.0;
     private double CastTime = 0.417;

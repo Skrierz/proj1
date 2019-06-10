@@ -32,10 +32,13 @@ public class Enemy : MonoBehaviour
     private bool startattack = false;
     private bool CanAttack=false;
     public bool CanAttack1 { get => CanAttack; set => CanAttack = value; }
+    private Vector3 AttackTarget;
+    public Vector3 AttackTarget1 { get => AttackTarget; set => AttackTarget = value; }
 
-  
 
-   
+
+
+
 
 
     // Start is called before the first frame update
@@ -57,7 +60,7 @@ public class Enemy : MonoBehaviour
     {
         if(target !=null)
         {
-            if (!CanAttack)
+            if (!CanAttack && !startattack)
             {
                 transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
             }
@@ -66,18 +69,20 @@ public class Enemy : MonoBehaviour
 
     void Attack()
     {
-        if (CanAttack)
+        if (CanAttack || startattack) 
         {
             startattack = true;
-            Transform SpellTarget = target;
+            Vector3 SpellTarget = AttackTarget;
             if (CastDuration < CastTime)
             {
                 CastDuration += Time.deltaTime;
             }
             else
             {
-                Instantiate(Spell, SpellTarget.position, SpellTarget.rotation);
+                var rotation = Quaternion.Euler(0, 0, 0);
+                Instantiate(Spell, SpellTarget, rotation);
                 CastDuration = 0.0;
+                startattack = false;
             }
 
         }
@@ -86,7 +91,7 @@ public class Enemy : MonoBehaviour
 
     void Animation()
     {
-        anim.SetBool("CanAttack", CanAttack);
+        anim.SetBool("CanAttack", startattack);
     }
 
     void flip()

@@ -5,6 +5,9 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     [SerializeField]
+    private HealthStat health;
+
+    [SerializeField]
     [Range(1, 10)]
     private float jumpForce;
 
@@ -46,6 +49,10 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
+    private void Awake()
+    {
+        health.Initrialize();
+    }
     private void Update()
     {
         float horizontAxis = Input.GetAxis("Horizontal");
@@ -55,6 +62,7 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetButtonDown("Fire1"))
         {
             Attack();
+            health.CurrentVal -= 10;
         }
         if (Input.GetButtonDown("Jump") && IsGrounded1)
         {
