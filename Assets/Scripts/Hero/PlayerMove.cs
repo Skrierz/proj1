@@ -5,6 +5,9 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     [SerializeField]
+    private Transform StartPoint;
+    [SerializeField]
+
     private HealthStat health;
 
     [SerializeField]
@@ -13,7 +16,8 @@ public class PlayerMove : MonoBehaviour
 
     [SerializeField]
     private float speed;
-
+    [SerializeField]
+    private float speedAttack;
     [SerializeField]
     private LayerMask ground;
 
@@ -31,7 +35,6 @@ public class PlayerMove : MonoBehaviour
 
     private Animator anim;
 
-    [SerializeField]
     private bool isGrounded;
 
     public bool IsGrounded1 { get => isGrounded; set => isGrounded = value; }
@@ -41,10 +44,10 @@ public class PlayerMove : MonoBehaviour
 
     Rigidbody2D rb;
 
-  
+
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
@@ -55,14 +58,14 @@ public class PlayerMove : MonoBehaviour
     }
     private void Update()
     {
-        float horizontAxis = Input.GetAxis("Horizontal");
+       
 //        IsGrounded1 = IsGrounded();
-        Movement(horizontAxis);
+        Movement();
         EnchancedJump();
+        isDead();
         if (Input.GetButtonDown("Fire1"))
         {
             Attack();
-            health.CurrentVal -= 10;
         }
         if (Input.GetButtonDown("Jump") && IsGrounded1)
         {
@@ -94,10 +97,11 @@ public class PlayerMove : MonoBehaviour
 
     }*/
 
-    private void Movement(float horizontal)
+    private void Movement()
     {
-        rb.velocity = new Vector2(speed * horizontal, rb.velocity.y);
-        Flip(horizontal);
+        float horizontAxis = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(speed * horizontAxis, rb.velocity.y);
+        Flip(horizontAxis);
 
     }
 
@@ -118,10 +122,28 @@ public class PlayerMove : MonoBehaviour
         }
 
     }
-    void Attack()
+    private void Attack()
     {
         Debug.Log("attack");
         anim.SetTrigger("IsAttack");
+        if (!isGrounded)
+        {
+            GetComponent<Rigidbody2D>().velocity = Vector2.up * jumpForce*0.1f; 
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health.CurrentVal -= damage;
+    }
+
+    private void isDead()
+    {
+        if (health.CurrentVal==0)
+        {
+            gameObject.transform.position = StartPoint.position;
+            health.CurrentVal = health.MaxVal;
+        }
     }
     /*
     bool IsGrounded()
@@ -144,7 +166,7 @@ public class PlayerMove : MonoBehaviour
         return false;
     }*/
 
-    void Flip(float horizontal)
+    private void Flip(float horizontal)
     {
         if (horizontal > 0 && !facingR || horizontal <0 &&facingR)
         {
@@ -154,7 +176,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    void RunAnimation()
+    private void RunAnimation()
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");

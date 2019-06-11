@@ -10,7 +10,6 @@ public class Enemy : MonoBehaviour
     private GameObject Spell;
     [SerializeField]
     private double CastTime=3.0;
-    [SerializeField]
     private double CastDuration = 0.0;
 
     private Transform target;

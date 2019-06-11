@@ -7,7 +7,13 @@ public class Spell : MonoBehaviour
 
     private AnimatorStateInfo anim;
     private double CastDuration=0.0;
+    [SerializeField]
+    private int damgae;
+    [SerializeField]
     private double CastTime = 0.417;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +26,7 @@ public class Spell : MonoBehaviour
         Collapse();
     }
 
+
     private void Collapse()
     {
         if (CastDuration < CastTime)
@@ -29,6 +36,15 @@ public class Spell : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            PlayerMove player = collision.gameObject.GetComponent<PlayerMove>();
+            player.TakeDamage(damgae);
         }
     }
 }
