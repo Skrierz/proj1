@@ -7,7 +7,6 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private Transform StartPoint;
     [SerializeField]
-
     private HealthStat health;
 
     [SerializeField]
@@ -16,6 +15,8 @@ public class PlayerMove : MonoBehaviour
 
     [SerializeField]
     private float speed;
+    [SerializeField]
+    private int damage;
     [SerializeField]
     private float speedAttack;
     [SerializeField]
@@ -33,10 +34,12 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private float lowJumpMultiplier;
 
+    [SerializeField]
+    private BoxCollider2D meleeAttack;
+
     private Animator anim;
 
     private bool isGrounded;
-
     public bool IsGrounded1 { get => isGrounded; set => isGrounded = value; }
 
 
@@ -51,11 +54,9 @@ public class PlayerMove : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-    }
-    private void Awake()
-    {
         health.Initrialize();
     }
+
     private void Update()
     {
        
@@ -63,7 +64,7 @@ public class PlayerMove : MonoBehaviour
         Movement();
         EnchancedJump();
         isDead();
-        if (Input.GetButtonDown("Fire1"))
+       if (Input.GetButtonDown("Fire1"))
         {
             Attack();
         }
@@ -126,12 +127,25 @@ public class PlayerMove : MonoBehaviour
     {
         Debug.Log("attack");
         anim.SetTrigger("IsAttack");
+        MeleeAttack();
         if (!isGrounded)
         {
-            GetComponent<Rigidbody2D>().velocity = Vector2.up * jumpForce*0.1f; 
+            GetComponent<Rigidbody2D>().velocity = Vector2.up * jumpForce * 0.1f;
         }
     }
+    public void MeleeAttack()
+    {
+        meleeAttack.enabled = !meleeAttack.enabled;
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag=="Enemy")
+        {
+            Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+            enemy.TakeDamage(damage);
+        }
 
+    }
     public void TakeDamage(int damage)
     {
         health.CurrentVal -= damage;
@@ -187,5 +201,6 @@ public class PlayerMove : MonoBehaviour
         anim.SetBool("IsGrounded", IsGrounded1);
 
     }
-  
+
+    
 }

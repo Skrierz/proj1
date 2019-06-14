@@ -5,9 +5,16 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
+    private HealthStat health;
+
+    [SerializeField]
     private float speed;
     [SerializeField]
     private GameObject Spell;
+    [SerializeField]
+    private bool isInterrupt;
+    [SerializeField]
+    private float InterruptValue;
     [SerializeField]
     private double CastTime=3.0;
     private double CastDuration = 0.0;
@@ -33,9 +40,7 @@ public class Enemy : MonoBehaviour
     public bool CanAttack1 { get => CanAttack; set => CanAttack = value; }
     private Vector3 AttackTarget;
     public Vector3 AttackTarget1 { get => AttackTarget; set => AttackTarget = value; }
-
-
-
+    private Canvas healtCanvas;
 
 
 
@@ -44,6 +49,8 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        health.Initrialize();
+        healtCanvas = transform.GetComponentInChildren<Canvas>();
     }
 
     // Update is called once per frame
@@ -54,6 +61,7 @@ public class Enemy : MonoBehaviour
         flip();
         Animation();
     }
+
 
     private void FollowTarget()
     {
@@ -84,6 +92,27 @@ public class Enemy : MonoBehaviour
                 startattack = false;
             }
 
+        }
+    }
+    public void TakeDamage(int damage)
+    {
+        if (isInterrupt)
+        {
+            CastDuration -= InterruptValue;
+            if (CastDuration<0.0)
+            {
+                CastDuration = 0.0;
+            }
+        }
+        if (!healtCanvas.isActiveAndEnabled)
+        {
+            healtCanvas.enabled = true;
+        }
+        health.CurrentVal -= damage;
+
+        if (health.CurrentVal<=0)
+        {
+            Destroy(gameObject);
         }
     }
 
