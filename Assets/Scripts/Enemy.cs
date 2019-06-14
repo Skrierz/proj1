@@ -130,6 +130,7 @@ public class Enemy : MonoBehaviour
             facingR = !facingR;
 
             transform.Rotate(0f, 180f, 0f);
+            healtCanvas.transform.Rotate(0f, 180f, 0f);
         }
     }
 }
