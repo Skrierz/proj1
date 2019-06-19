@@ -18,6 +18,8 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private int damage;
     [SerializeField]
+    private int DashDistance;
+    [SerializeField]
     private float speedAttack;
     [SerializeField]
     private LayerMask ground;
@@ -64,7 +66,11 @@ public class PlayerMove : MonoBehaviour
         Movement();
         EnchancedJump();
         isDead();
-       if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Dash"))
+        {
+            Dash();
+        }
+        if (Input.GetButtonDown("Fire1"))
         {
             Attack();
         }
@@ -190,11 +196,25 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    private void Dash()
+    {
+        int DashSpeed=50;
+        if (facingR)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, new Vector3(transform.position.x + DashDistance, transform.position.y, transform.position.z),Time.deltaTime* DashSpeed);
+        }
+        else
+        {
+            transform.position = Vector2.MoveTowards(transform.position, new Vector3(transform.position.x - DashDistance, transform.position.y, transform.position.z),Time.deltaTime*DashSpeed);
+        }
+
+       
+    }
+
     private void RunAnimation()
     {
         float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-        if (h != 0 && v == 0)
+        if (h != 0 && isGrounded)
             anim.SetBool("IsRun", true);
         else
             anim.SetBool("IsRun", false);
